@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#  Update the system
+yum -y update
+
+# Install the docker-engine package
+yum -y install docker-engine
+
+# Format and mount the volume
+fdisk -l
+
+# Create a btrfs file system 
+mkfs.btrfs -f /dev/sdb
+
+# Mount the file system on /var/lib/docker
+mkdir -p /var/lib/docker
+mount /dev/sdb /var/lib/docker
+
+# Add an entry for /var/lib/docker to the /etc/fstab file
+echo "/dev/sdb /var/lib/docker btrfs defaults,noatime,_netdev 0 2" >> /etc/fstab
+
+# Start the docker service
+systemctl start docker
+
+# Configure the docker service to start at boot time
+systemctl enable docker
+
+
